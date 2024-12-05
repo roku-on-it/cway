@@ -1,0 +1,56 @@
+# Build directories
+/build/
+/CMakeFiles/
+
+# CMake generated files
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+
+# Executable files
+cway
+cway.exe
+cway.out
+
+# Object files
+*.o
+*.obj
+
+# Libraries
+*.so
+*.dll
+*.dylib
+*.a
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Temporary files
+*.tmp
+*.log
+
+# VSCode settings
+.vscode/
+
+# CLion specific files
+.idea/
+*.iml
+
+# Other IDEs' settings (optional)
+# Eclipse
+.project
+.cproject
+
+# NetBeans
+nbproject/
+build/
+dist/
+.nb-gradle/
+
+# macOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
