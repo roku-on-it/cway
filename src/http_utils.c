@@ -10,54 +10,9 @@
 char *cw_get_req_str(int client_fd) {
   ssize_t total_read = 0;
 
-  char *req_str = calloc(MAX_REQ_SIZE, sizeof(char));
-  if (req_str == NULL) {
-    perror("Could not reallocate");
-    cw_send_str(client_fd, 500, "Internal Server Error");
-  }
-
-  while (1) {
-    char temp_buf[CHUNK_SIZE] = {0};
-    ssize_t read_bytes = recv(client_fd, temp_buf, CHUNK_SIZE, 0);
-    if (read_bytes < 0) {
-      perror("Recv failed");
-      cw_send_str(client_fd, 500, "Internal Server Error");
-    }
-
-    if (read_bytes == 0) {
-      break;
-    }
-
-    if (read_bytes == -1) {
-      perror("Recv failed");
-      cw_send_str(client_fd, 500, "Internal Server Error");
-    }
-
-    total_read += read_bytes;
-    req_str = realloc(req_str, total_read);
-    if (req_str == NULL) {
-      perror("Could not reallocate");
-      cw_send_str(client_fd, 500, "Internal Server Error");
-    }
-
-    strncat(req_str, temp_buf, read_bytes);
-
-    if (read_bytes < CHUNK_SIZE) {
-      break;
-    }
-
-    if (total_read > MAX_REQ_SIZE) {
-      cw_send_str(client_fd, 413, "Content Too Large");
-      cw_close_client(client_fd, req_str);
-    }
-  }
-
-  if (total_read < 8) {
-    cw_send_str(client_fd, 405, "Method Not Allowed");
-    cw_close_client(client_fd, req_str);
-  }
-
-  return req_str;
+ // TODO: So fucking frustrated because I couldn't implement this function properly.
+ // We need to wait for the remaining data to be read from the client_fd and not just the first chunk
+ // because the client could be using a slow connection like 3G or 2G. God help me...
 }
 
 void cw_close_client(int client_fd, char *req_str) {
@@ -68,9 +23,10 @@ void cw_close_client(int client_fd, char *req_str) {
 
 void cw_send_str(int client_fd, int status_code, char *body) {
   char response[MAX_REQ_SIZE] = {0};
-  sprintf(response,
-          "HTTP/1.1 %d %s\nContent-Type: text/plain\nContent-Length: %ld\n\n%s",
-          status_code, cw_get_status_text(status_code), strlen(body), body);
+  snprintf(response, sizeof(response),
+           "HTTP/1.1 %d %s\r\nContent-Type: text/plain\r\nContent-Length: "
+           "%ld\r\n\r\n%s",
+           status_code, cw_get_status_text(status_code), strlen(body), body);
   send(client_fd, response, strlen(response), 0);
 }
 
