@@ -68,8 +68,7 @@ void *handle_client(void *arg) {
     char c = req_str[i];
   }
 
-  cw_send_str(client_fd, 200, "Barisin amminake");
-
+  cw_send_str(client_fd, 200, "Lorem ipsum dolor sit amet");
   cw_close_client(client_fd, req_str);
 }
 
